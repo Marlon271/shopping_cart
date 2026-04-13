@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import shopping_cart.backend.dto.AdjustBasketLineUnitsRequest;
+import shopping_cart.backend.dto.BasketAmountsResponse;
 import shopping_cart.backend.dto.BasketDetailResponse;
 import shopping_cart.backend.dto.BasketLineResponse;
 import shopping_cart.backend.dto.BasketSnapshotResponse;
@@ -46,6 +47,13 @@ public class BasketController {
         @PathVariable @Positive(message = "basketId debe ser un valor positivo") Long basketId
     ) {
         return ResponseEntity.ok(basketService.getBasketDetail(basketId));
+    }
+
+    @GetMapping("/{basketId}/amounts")
+    public ResponseEntity<BasketAmountsResponse> getBasketAmounts(
+        @PathVariable @Positive(message = "basketId debe ser un valor positivo") Long basketId
+    ) {
+        return ResponseEntity.ok(basketService.getBasketAmounts(basketId));
     }
 
     @PatchMapping("/{basketId}/lines/{lineId}")

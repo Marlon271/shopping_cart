@@ -11,6 +11,7 @@ Actualmente van implementadas:
 - consulta detallada de la canasta con sus lineas
 - ajuste de unidades por linea
 - retiro individual de lineas
+- consolidado monetario de la canasta
 - backend en Spring Boot con modelo `Basket`
 - modelo `BasketLine` para productos agregados
 - gateway en Spring Boot como punto unico de entrada
@@ -30,6 +31,7 @@ Actualmente van implementadas:
 - `GET /api/v1/baskets/{basketId}`
 - `PATCH /api/v1/baskets/{basketId}/lines/{lineId}`
 - `DELETE /api/v1/baskets/{basketId}/lines/{lineId}`
+- `GET /api/v1/baskets/{basketId}/amounts`
 
 Request:
 

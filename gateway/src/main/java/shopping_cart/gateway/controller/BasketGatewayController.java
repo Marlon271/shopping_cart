@@ -40,6 +40,13 @@ public class BasketGatewayController {
         return basketGatewayService.getBasketDetail(basketId);
     }
 
+    @GetMapping("/{basketId}/amounts")
+    public ResponseEntity<Object> getBasketAmounts(
+        @PathVariable @Positive(message = "basketId debe ser un valor positivo") Long basketId
+    ) {
+        return basketGatewayService.getBasketAmounts(basketId);
+    }
+
     @PatchMapping("/{basketId}/lines/{lineId}")
     public ResponseEntity<Object> adjustLineUnits(
         @PathVariable @Positive(message = "basketId debe ser un valor positivo") Long basketId,
