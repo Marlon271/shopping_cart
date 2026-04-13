@@ -19,6 +19,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import shopping_cart.backend.dto.BasketLineResponse;
 import shopping_cart.backend.dto.BasketDetailResponse;
 import shopping_cart.backend.dto.AdjustBasketLineUnitsRequest;
+import shopping_cart.backend.dto.RemoveBasketLineResponse;
 import shopping_cart.backend.dto.RegisterBasketLineRequest;
 import shopping_cart.backend.entity.Basket;
 import shopping_cart.backend.entity.BasketLine;
@@ -241,5 +242,37 @@ class BasketServiceTest {
 
         assertEquals(4, response.units());
         assertEquals(new BigDecimal("396000.00"), response.lineAmount());
+    }
+
+    @Test
+    void shouldRemoveLineFromOpenBasket() {
+        Basket basket = Basket.builder()
+            .id(91L)
+            .shopperId(333L)
+            .state(BasketState.OPEN)
+            .createdAt(LocalDateTime.now().minusHours(2))
+            .updatedAt(LocalDateTime.now().minusMinutes(2))
+            .build();
+
+        BasketLine line = BasketLine.builder()
+            .id(31L)
+            .basket(basket)
+            .skuId(404L)
+            .productLabel("Hub USB")
+            .units(1)
+            .unitAmount(new BigDecimal("65000.00"))
+            .lineAmount(new BigDecimal("65000.00"))
+            .build();
+
+        when(basketRepository.findById(91L)).thenReturn(Optional.of(basket));
+        when(basketLineRepository.findById(31L)).thenReturn(Optional.of(line));
+        when(basketRepository.save(any(Basket.class))).thenReturn(basket);
+
+        RemoveBasketLineResponse response = basketService.removeLine(91L, 31L);
+
+        assertEquals("Linea eliminada correctamente de la canasta", response.message());
+        assertEquals(91L, response.basketId());
+        assertEquals(31L, response.lineId());
+        verify(basketLineRepository).delete(line);
     }
 }

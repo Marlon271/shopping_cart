@@ -37,6 +37,13 @@ public class BasketGatewayService {
             .toEntity(Object.class);
     }
 
+    public ResponseEntity<Object> removeLine(Long basketId, Long lineId) {
+        return backendRestClient.delete()
+            .uri("/api/v1/baskets/{basketId}/lines/{lineId}", basketId, lineId)
+            .retrieve()
+            .toEntity(Object.class);
+    }
+
     public ResponseEntity<Object> registerLine(Long basketId, RegisterBasketLineRequest request) {
         return backendRestClient.post()
             .uri("/api/v1/baskets/{basketId}/lines", basketId)
