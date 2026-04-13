@@ -29,6 +29,13 @@ public class BasketGatewayService {
             .toEntity(Object.class);
     }
 
+    public ResponseEntity<Object> getBasketAmounts(Long basketId) {
+        return backendRestClient.get()
+            .uri("/api/v1/baskets/{basketId}/amounts", basketId)
+            .retrieve()
+            .toEntity(Object.class);
+    }
+
     public ResponseEntity<Object> adjustLineUnits(Long basketId, Long lineId, AdjustBasketLineUnitsRequest request) {
         return backendRestClient.patch()
             .uri("/api/v1/baskets/{basketId}/lines/{lineId}", basketId, lineId)

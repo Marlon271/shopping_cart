@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import shopping_cart.backend.dto.AdjustBasketLineUnitsRequest;
+import shopping_cart.backend.dto.BasketAmountsResponse;
 import shopping_cart.backend.dto.BasketDetailLineResponse;
 import shopping_cart.backend.dto.BasketDetailResponse;
 import shopping_cart.backend.dto.BasketLineResponse;
@@ -150,6 +151,30 @@ public class BasketService implements IBasketService {
             "Linea eliminada correctamente de la canasta",
             basketId,
             lineId
+        );
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public BasketAmountsResponse getBasketAmounts(Long basketId) {
+        basketRepository.findById(basketId)
+            .orElseThrow(() -> new ResourceMissingException("No existe una canasta con id " + basketId));
+
+        List<BasketLine> lines = basketLineRepository.findAllByBasketIdOrderByIdAsc(basketId);
+
+        int totalUnits = lines.stream()
+            .mapToInt(BasketLine::getUnits)
+            .sum();
+
+        BigDecimal grossAmount = lines.stream()
+            .map(BasketLine::getLineAmount)
+            .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        return new BasketAmountsResponse(
+            basketId,
+            lines.size(),
+            totalUnits,
+            grossAmount
         );
     }
 
