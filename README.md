@@ -8,6 +8,7 @@ Actualmente van implementadas:
 
 - apertura o reutilizacion de una canasta activa por comprador
 - registro de lineas de producto sobre una canasta abierta
+- consulta detallada de la canasta con sus lineas
 - backend en Spring Boot con modelo `Basket`
 - modelo `BasketLine` para productos agregados
 - gateway en Spring Boot como punto unico de entrada
@@ -24,6 +25,7 @@ Actualmente van implementadas:
 
 - `POST /api/v1/baskets`
 - `POST /api/v1/baskets/{basketId}/lines`
+- `GET /api/v1/baskets/{basketId}`
 
 Request:
 
