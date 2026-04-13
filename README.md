@@ -61,12 +61,10 @@ Servicios expuestos:
 - `backend`: `http://localhost:8081`
 - `postgres`: `localhost:5030`
 
-## Proximas historias
+## Documentacion
 
-- `HU-102`: registrar lineas de producto
-- `HU-103`: consultar el detalle de la canasta
-- `HU-104`: ajustar unidades
-- `HU-105`: retirar lineas
-- `HU-106`: consolidar montos
-- `HU-107`: experiencia visual en frontend
-- `HU-108`: documentacion, diagramas y pantallazos
+- introduccion: `Doc/introduccion.md`
+- estructura de solucion: `Doc/estructura-solucion.md`
+- priorizacion: `Doc/moscow-priorizacion.md`
+- diagramas: `Doc/Diagramas`
+- historias de usuario: `Doc/HU`
