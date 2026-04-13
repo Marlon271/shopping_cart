@@ -1,0 +1,52 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: basket-workspace-postgres
+    environment:
+      POSTGRES_DB: basket_workspace_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5030:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d basket_workspace_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    image: basket-workspace-backend:latest
+    build:
+      context: ./backend
+    container_name: basket-workspace-backend
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      SERVER_PORT: 8081
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_DB: basket_workspace_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "8081:8081"
+
+  gateway:
+    image: basket-workspace-gateway:latest
+    build:
+      context: ./gateway
+    container_name: basket-workspace-gateway
+    depends_on:
+      - backend
+    environment:
+      SERVER_PORT: 8080
+      BACKEND_BASE_URL: http://backend:8081
+    ports:
+      - "8080:8080"
+
+volumes:
+  postgres_data:
