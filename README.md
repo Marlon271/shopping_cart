@@ -1,32 +1,39 @@
-# Basket Workspace
+# Shopping Cart
 
-Base tecnica del proyecto reconstruido a partir del repositorio de referencia, pero con un dominio propio y una trazabilidad nueva.
+Proyecto de carrito de compras orientado a gestionar una canasta activa por comprador, registrar productos, ajustar cantidades y consultar el consolidado monetario desde una sola interfaz web.
 
-## Estado actual
+## Que hace el sistema
 
-Actualmente van implementadas:
+Actualmente el proyecto permite:
 
-- apertura o reutilizacion de una canasta activa por comprador
-- registro de lineas de producto sobre una canasta abierta
-- consulta detallada de la canasta con sus lineas
-- ajuste de unidades por linea
-- retiro individual de lineas
-- consolidado monetario de la canasta
-- backend en Spring Boot con modelo `Basket`
-- modelo `BasketLine` para productos agregados
-- frontend Vue 3 con una vista operativa renovada
-- gateway en Spring Boot como punto unico de entrada
-- PostgreSQL con las tablas `purchase_baskets` y `basket_lines`
-- entorno local con Docker Compose
+- abrir o reutilizar una canasta activa por comprador
+- registrar productos por SKU dentro de la canasta
+- consultar el detalle completo con sus lineas
+- ajustar unidades por cada linea registrada
+- retirar productos de manera individual
+- recalcular y consultar los montos acumulados
+- operar todo el flujo desde un frontend Vue 3
+- exponer los servicios mediante un `gateway` en Spring Boot
+- persistir la informacion en PostgreSQL
 
-## Arquitectura
+## Como funciona el carrito
 
-- `frontend`: tablero visual para operar la canasta
-- `backend`: microservicio principal de negocio
-- `gateway`: fachada REST consumida por el frontend
-- `database`: scripts de inicializacion de PostgreSQL
+1. El usuario ingresa un `shopperId` y abre su canasta.
+2. El sistema crea una nueva canasta o reutiliza la que ya este abierta para ese comprador.
+3. Desde el formulario principal se registran productos con `skuId`, nombre, unidades y valor unitario.
+4. Cada producto agregado aparece en el libro mayor de lineas de la canasta.
+5. El usuario puede modificar unidades o retirar una linea cuando lo necesite.
+6. El panel lateral muestra el monto bruto, el total de lineas y el total de unidades para mantener el control de la compra.
 
-## Endpoint disponible
+## Base tecnica
+
+- `frontend`: Vue 3 + Pinia + Vue Router para la experiencia operativa del carrito
+- `gateway`: Spring Boot como punto unico de entrada para el cliente web
+- `backend`: Spring Boot con logica de negocio, persistencia y calculo de montos
+- `database`: PostgreSQL con las tablas `purchase_baskets` y `basket_lines`
+- `docker-compose`: orquestacion local de frontend, gateway, backend y base de datos
+
+## API disponible
 
 - `POST /api/v1/baskets`
 - `POST /api/v1/baskets/{basketId}/lines`
@@ -35,7 +42,7 @@ Actualmente van implementadas:
 - `DELETE /api/v1/baskets/{basketId}/lines/{lineId}`
 - `GET /api/v1/baskets/{basketId}/amounts`
 
-Request:
+Ejemplo de apertura:
 
 ```json
 {
@@ -43,10 +50,10 @@ Request:
 }
 ```
 
-## Respuesta esperada
+Comportamiento esperado:
 
-- `201 Created` cuando se crea una nueva canasta abierta
-- `200 OK` cuando el comprador ya tiene una canasta abierta y se reutiliza
+- `201 Created` cuando se crea una nueva canasta
+- `200 OK` cuando se reutiliza una canasta abierta del mismo comprador
 
 ## Ejecucion local
 
