@@ -1,11 +1,11 @@
 <template>
-  <section class="surface-panel reveal reveal--delay-3">
-    <header class="section-heading">
+  <section class="surface-panel surface-panel--ledger reveal reveal--delay-4">
+    <header class="section-heading section-heading--ledger">
       <div>
         <span class="section-heading__eyebrow">Libro mayor</span>
         <h2>Lineas de la canasta</h2>
       </div>
-      <p>Actualiza unidades o retira registros sin perder el contexto del comprador.</p>
+      <p>Haz ajustes finos sobre cada registro sin perder el hilo del consolidado.</p>
     </header>
 
     <div v-if="!hasBasket" class="empty-state">
@@ -15,7 +15,7 @@
 
     <div v-else-if="!lines.length" class="empty-state">
       <h3>La canasta aun no tiene lineas.</h3>
-      <p>Usa el panel de carga rápida para registrar los primeros productos.</p>
+      <p>Usa el editor superior para registrar los primeros productos y poblar la vista.</p>
     </div>
 
     <div v-else class="ledger-table-wrap">
@@ -53,7 +53,7 @@
                 </button>
               </div>
             </td>
-            <td>{{ formatCurrency(line.lineAmount) }}</td>
+            <td class="ledger-amount">{{ formatCurrency(line.lineAmount) }}</td>
             <td>
               <button class="button button--danger" :disabled="busy" @click="$emit('remove', line.lineId)">
                 Retirar
