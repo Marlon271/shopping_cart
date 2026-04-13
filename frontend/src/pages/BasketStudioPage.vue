@@ -45,7 +45,7 @@
 </template>
 
 <script setup>
-import { computed } from 'vue';
+import { computed, onMounted } from 'vue';
 import { storeToRefs } from 'pinia';
 import StudioLayout from '../layouts/StudioLayout.vue';
 import WorkspaceHero from '../components/basket/WorkspaceHero.vue';
@@ -79,4 +79,8 @@ const {
 } = basketStore;
 
 const isBusy = computed(() => loading.value || mutating.value);
+
+onMounted(() => {
+  openOrReuseBasket();
+});
 </script>
