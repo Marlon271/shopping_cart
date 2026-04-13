@@ -1,9 +1,12 @@
 package shopping_cart.backend.service;
 
+import java.util.List;
 import java.math.BigDecimal;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import shopping_cart.backend.dto.BasketDetailLineResponse;
+import shopping_cart.backend.dto.BasketDetailResponse;
 import shopping_cart.backend.dto.BasketLineResponse;
 import shopping_cart.backend.dto.BasketSnapshotResponse;
 import shopping_cart.backend.dto.RegisterBasketLineRequest;
@@ -69,6 +72,28 @@ public class BasketService implements IBasketService {
         return toLineResponse(storedLine);
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public BasketDetailResponse getBasketDetail(Long basketId) {
+        Basket basket = basketRepository.findById(basketId)
+            .orElseThrow(() -> new ResourceMissingException("No existe una canasta con id " + basketId));
+
+        List<BasketDetailLineResponse> lines = basketLineRepository.findAllByBasketIdOrderByIdAsc(basketId)
+            .stream()
+            .map(this::toDetailLineResponse)
+            .toList();
+
+        return new BasketDetailResponse(
+            basket.getId(),
+            basket.getShopperId(),
+            basket.getState().name(),
+            lines.size(),
+            basket.getCreatedAt(),
+            basket.getUpdatedAt(),
+            lines
+        );
+    }
+
     private BasketSnapshotResponse toResponse(Basket basket) {
         return new BasketSnapshotResponse(
             basket.getId(),
@@ -83,6 +108,17 @@ public class BasketService implements IBasketService {
         return new BasketLineResponse(
             line.getId(),
             line.getBasket().getId(),
+            line.getSkuId(),
+            line.getProductLabel(),
+            line.getUnits(),
+            line.getUnitAmount(),
+            line.getLineAmount()
+        );
+    }
+
+    private BasketDetailLineResponse toDetailLineResponse(BasketLine line) {
+        return new BasketDetailLineResponse(
+            line.getId(),
             line.getSkuId(),
             line.getProductLabel(),
             line.getUnits(),

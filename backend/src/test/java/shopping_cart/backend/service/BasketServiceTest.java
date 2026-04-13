@@ -9,6 +9,7 @@ import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,6 +17,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import shopping_cart.backend.dto.BasketLineResponse;
+import shopping_cart.backend.dto.BasketDetailResponse;
 import shopping_cart.backend.dto.RegisterBasketLineRequest;
 import shopping_cart.backend.entity.Basket;
 import shopping_cart.backend.entity.BasketLine;
@@ -162,5 +164,46 @@ class BasketServiceTest {
         assertEquals(4, response.units());
         assertEquals(new BigDecimal("480000.00"), response.lineAmount());
         verify(basketLineRepository).save(existingLine);
+    }
+
+    @Test
+    void shouldReturnBasketDetailWithRegisteredLines() {
+        Basket basket = Basket.builder()
+            .id(88L)
+            .shopperId(777L)
+            .state(BasketState.OPEN)
+            .createdAt(LocalDateTime.now().minusHours(1))
+            .updatedAt(LocalDateTime.now().minusMinutes(3))
+            .build();
+
+        BasketLine firstLine = BasketLine.builder()
+            .id(1L)
+            .basket(basket)
+            .skuId(10L)
+            .productLabel("Teclado mecanico")
+            .units(1)
+            .unitAmount(new BigDecimal("240000.00"))
+            .lineAmount(new BigDecimal("240000.00"))
+            .build();
+
+        BasketLine secondLine = BasketLine.builder()
+            .id(2L)
+            .basket(basket)
+            .skuId(20L)
+            .productLabel("Pad XL")
+            .units(2)
+            .unitAmount(new BigDecimal("70000.00"))
+            .lineAmount(new BigDecimal("140000.00"))
+            .build();
+
+        when(basketRepository.findById(88L)).thenReturn(Optional.of(basket));
+        when(basketLineRepository.findAllByBasketIdOrderByIdAsc(88L)).thenReturn(List.of(firstLine, secondLine));
+
+        BasketDetailResponse response = basketService.getBasketDetail(88L);
+
+        assertEquals(88L, response.basketId());
+        assertEquals(777L, response.shopperId());
+        assertEquals(2, response.lineCount());
+        assertEquals(2, response.lines().size());
     }
 }
