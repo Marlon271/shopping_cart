@@ -4,12 +4,14 @@ Base tecnica del proyecto reconstruido a partir del repositorio de referencia, p
 
 ## Estado actual
 
-En esta primera historia (`HU-101`) ya quedo implementado:
+Actualmente van implementadas:
 
 - apertura o reutilizacion de una canasta activa por comprador
+- registro de lineas de producto sobre una canasta abierta
 - backend en Spring Boot con modelo `Basket`
+- modelo `BasketLine` para productos agregados
 - gateway en Spring Boot como punto unico de entrada
-- PostgreSQL con la tabla `purchase_baskets`
+- PostgreSQL con las tablas `purchase_baskets` y `basket_lines`
 - entorno local con Docker Compose
 
 ## Arquitectura
@@ -21,6 +23,7 @@ En esta primera historia (`HU-101`) ya quedo implementado:
 ## Endpoint disponible
 
 - `POST /api/v1/baskets`
+- `POST /api/v1/baskets/{basketId}/lines`
 
 Request:
 
