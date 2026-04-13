@@ -5,6 +5,7 @@
         :shopper-id="shopperId"
         :basket="basket"
         :amounts="amounts"
+        :lines="lines"
         :busy="isBusy"
         :line-count="lineCount"
         @update:shopper-id="setShopperId"
@@ -19,6 +20,8 @@
       <div v-if="error" class="status-banner status-banner--error">
         {{ error }}
       </div>
+
+      <OperationsStrip :basket="basket" :amounts="amounts" :line-count="lineCount" />
 
       <section class="workspace-columns">
         <div class="workspace-columns__main">
@@ -49,6 +52,7 @@ import { computed, onMounted } from 'vue';
 import { storeToRefs } from 'pinia';
 import StudioLayout from '../layouts/StudioLayout.vue';
 import WorkspaceHero from '../components/basket/WorkspaceHero.vue';
+import OperationsStrip from '../components/basket/OperationsStrip.vue';
 import QuickEntryPanel from '../components/basket/QuickEntryPanel.vue';
 import BasketLedger from '../components/basket/BasketLedger.vue';
 import TotalsRail from '../components/basket/TotalsRail.vue';

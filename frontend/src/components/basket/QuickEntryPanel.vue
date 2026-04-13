@@ -1,11 +1,11 @@
 <template>
-  <section class="surface-panel reveal reveal--delay-2">
-    <header class="section-heading">
+  <section class="surface-panel surface-panel--editor reveal reveal--delay-3">
+    <header class="section-heading section-heading--editor">
       <div>
-        <span class="section-heading__eyebrow">Carga rápida</span>
+        <span class="section-heading__eyebrow">Carga guiada</span>
         <h2>Registrar una nueva linea</h2>
       </div>
-      <p>Usa referencias de SKU, unidades y valor unitario para poblar la canasta.</p>
+      <p>Usa este editor para poblar la canasta con referencias limpias y montos consistentes.</p>
     </header>
 
     <form class="entry-form" @submit.prevent="handleSubmit">
@@ -30,7 +30,10 @@
       </label>
 
       <div class="entry-form__footer">
-        <p>La vista fusiona lineas por SKU cuando detecta el mismo producto.</p>
+        <div class="entry-form__hint">
+          <strong>Regla activa</strong>
+          <p>Si repites el SKU, el sistema acumula unidades en vez de duplicar la linea.</p>
+        </div>
         <button class="button button--primary" :disabled="busy || disabled">
           Agregar a la canasta
         </button>
