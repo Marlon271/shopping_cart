@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -19,6 +20,7 @@ import shopping_cart.backend.dto.BasketDetailResponse;
 import shopping_cart.backend.dto.BasketLineResponse;
 import shopping_cart.backend.dto.BasketSnapshotResponse;
 import shopping_cart.backend.dto.OpenBasketRequest;
+import shopping_cart.backend.dto.RemoveBasketLineResponse;
 import shopping_cart.backend.dto.RegisterBasketLineRequest;
 import shopping_cart.backend.service.BasketOpeningResult;
 import shopping_cart.backend.service.IBasketService;
@@ -53,6 +55,14 @@ public class BasketController {
         @Valid @RequestBody AdjustBasketLineUnitsRequest request
     ) {
         return ResponseEntity.ok(basketService.adjustLineUnits(basketId, lineId, request));
+    }
+
+    @DeleteMapping("/{basketId}/lines/{lineId}")
+    public ResponseEntity<RemoveBasketLineResponse> removeLine(
+        @PathVariable @Positive(message = "basketId debe ser un valor positivo") Long basketId,
+        @PathVariable @Positive(message = "lineId debe ser un valor positivo") Long lineId
+    ) {
+        return ResponseEntity.ok(basketService.removeLine(basketId, lineId));
     }
 
     @PostMapping("/{basketId}/lines")
