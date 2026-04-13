@@ -1,5 +1,6 @@
 package shopping_cart.gateway.service;
 
+import shopping_cart.gateway.dto.AdjustBasketLineUnitsRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -24,6 +25,14 @@ public class BasketGatewayService {
     public ResponseEntity<Object> getBasketDetail(Long basketId) {
         return backendRestClient.get()
             .uri("/api/v1/baskets/{basketId}", basketId)
+            .retrieve()
+            .toEntity(Object.class);
+    }
+
+    public ResponseEntity<Object> adjustLineUnits(Long basketId, Long lineId, AdjustBasketLineUnitsRequest request) {
+        return backendRestClient.patch()
+            .uri("/api/v1/baskets/{basketId}/lines/{lineId}", basketId, lineId)
+            .body(request)
             .retrieve()
             .toEntity(Object.class);
     }

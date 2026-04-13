@@ -18,6 +18,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import shopping_cart.backend.dto.BasketLineResponse;
 import shopping_cart.backend.dto.BasketDetailResponse;
+import shopping_cart.backend.dto.AdjustBasketLineUnitsRequest;
 import shopping_cart.backend.dto.RegisterBasketLineRequest;
 import shopping_cart.backend.entity.Basket;
 import shopping_cart.backend.entity.BasketLine;
@@ -205,5 +206,40 @@ class BasketServiceTest {
         assertEquals(777L, response.shopperId());
         assertEquals(2, response.lineCount());
         assertEquals(2, response.lines().size());
+    }
+
+    @Test
+    void shouldAdjustUnitsForExistingLine() {
+        Basket basket = Basket.builder()
+            .id(90L)
+            .shopperId(222L)
+            .state(BasketState.OPEN)
+            .createdAt(LocalDateTime.now().minusHours(1))
+            .updatedAt(LocalDateTime.now().minusMinutes(1))
+            .build();
+
+        BasketLine line = BasketLine.builder()
+            .id(30L)
+            .basket(basket)
+            .skuId(808L)
+            .productLabel("Base refrigerante")
+            .units(1)
+            .unitAmount(new BigDecimal("99000.00"))
+            .lineAmount(new BigDecimal("99000.00"))
+            .build();
+
+        when(basketRepository.findById(90L)).thenReturn(Optional.of(basket));
+        when(basketLineRepository.findById(30L)).thenReturn(Optional.of(line));
+        when(basketLineRepository.save(line)).thenReturn(line);
+        when(basketRepository.save(any(Basket.class))).thenReturn(basket);
+
+        BasketLineResponse response = basketService.adjustLineUnits(
+            90L,
+            30L,
+            new AdjustBasketLineUnitsRequest(4)
+        );
+
+        assertEquals(4, response.units());
+        assertEquals(new BigDecimal("396000.00"), response.lineAmount());
     }
 }

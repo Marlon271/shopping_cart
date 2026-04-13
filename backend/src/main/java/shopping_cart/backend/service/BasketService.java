@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import shopping_cart.backend.dto.AdjustBasketLineUnitsRequest;
 import shopping_cart.backend.dto.BasketDetailLineResponse;
 import shopping_cart.backend.dto.BasketDetailResponse;
 import shopping_cart.backend.dto.BasketLineResponse;
@@ -92,6 +93,33 @@ public class BasketService implements IBasketService {
             basket.getUpdatedAt(),
             lines
         );
+    }
+
+    @Override
+    @Transactional
+    public BasketLineResponse adjustLineUnits(Long basketId, Long lineId, AdjustBasketLineUnitsRequest request) {
+        Basket basket = basketRepository.findById(basketId)
+            .orElseThrow(() -> new ResourceMissingException("No existe una canasta con id " + basketId));
+
+        if (basket.getState() != BasketState.OPEN) {
+            throw new BusinessRuleException("Solo se pueden ajustar lineas en canastas abiertas");
+        }
+
+        BasketLine line = basketLineRepository.findById(lineId)
+            .orElseThrow(() -> new ResourceMissingException("No existe una linea con id " + lineId));
+
+        if (!line.getBasket().getId().equals(basketId)) {
+            throw new BusinessRuleException(
+                "La linea con id " + lineId + " no pertenece a la canasta con id " + basketId
+            );
+        }
+
+        line.redefineUnits(request.units());
+        BasketLine storedLine = basketLineRepository.save(line);
+        basket.touch();
+        basketRepository.save(basket);
+
+        return toLineResponse(storedLine);
     }
 
     private BasketSnapshotResponse toResponse(Basket basket) {

@@ -77,6 +77,11 @@ public class BasketLine {
         recalculateLineAmount();
     }
 
+    public void redefineUnits(Integer nextUnits) {
+        units = nextUnits;
+        recalculateLineAmount();
+    }
+
     public void refreshSnapshot(String nextLabel, BigDecimal nextUnitAmount) {
         productLabel = nextLabel.trim();
         unitAmount = normalize(nextUnitAmount);
