@@ -57,4 +57,8 @@ public class Basket {
     void onUpdate() {
         updatedAt = LocalDateTime.now();
     }
+
+    public void touch() {
+        updatedAt = LocalDateTime.now();
+    }
 }
