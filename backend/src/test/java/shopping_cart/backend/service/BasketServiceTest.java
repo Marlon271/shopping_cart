@@ -19,6 +19,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import shopping_cart.backend.dto.BasketLineResponse;
 import shopping_cart.backend.dto.BasketDetailResponse;
 import shopping_cart.backend.dto.AdjustBasketLineUnitsRequest;
+import shopping_cart.backend.dto.BasketAmountsResponse;
+import shopping_cart.backend.dto.RemoveBasketLineResponse;
 import shopping_cart.backend.dto.RegisterBasketLineRequest;
 import shopping_cart.backend.entity.Basket;
 import shopping_cart.backend.entity.BasketLine;
@@ -241,5 +243,78 @@ class BasketServiceTest {
 
         assertEquals(4, response.units());
         assertEquals(new BigDecimal("396000.00"), response.lineAmount());
+    }
+
+    @Test
+    void shouldRemoveLineFromOpenBasket() {
+        Basket basket = Basket.builder()
+            .id(91L)
+            .shopperId(333L)
+            .state(BasketState.OPEN)
+            .createdAt(LocalDateTime.now().minusHours(2))
+            .updatedAt(LocalDateTime.now().minusMinutes(2))
+            .build();
+
+        BasketLine line = BasketLine.builder()
+            .id(31L)
+            .basket(basket)
+            .skuId(404L)
+            .productLabel("Hub USB")
+            .units(1)
+            .unitAmount(new BigDecimal("65000.00"))
+            .lineAmount(new BigDecimal("65000.00"))
+            .build();
+
+        when(basketRepository.findById(91L)).thenReturn(Optional.of(basket));
+        when(basketLineRepository.findById(31L)).thenReturn(Optional.of(line));
+        when(basketRepository.save(any(Basket.class))).thenReturn(basket);
+
+        RemoveBasketLineResponse response = basketService.removeLine(91L, 31L);
+
+        assertEquals("Linea eliminada correctamente de la canasta", response.message());
+        assertEquals(91L, response.basketId());
+        assertEquals(31L, response.lineId());
+        verify(basketLineRepository).delete(line);
+    }
+
+    @Test
+    void shouldReturnBasketAmountsSummary() {
+        Basket basket = Basket.builder()
+            .id(93L)
+            .shopperId(444L)
+            .state(BasketState.OPEN)
+            .createdAt(LocalDateTime.now().minusHours(1))
+            .updatedAt(LocalDateTime.now().minusMinutes(1))
+            .build();
+
+        BasketLine firstLine = BasketLine.builder()
+            .id(40L)
+            .basket(basket)
+            .skuId(1L)
+            .productLabel("Webcam")
+            .units(1)
+            .unitAmount(new BigDecimal("200000.00"))
+            .lineAmount(new BigDecimal("200000.00"))
+            .build();
+
+        BasketLine secondLine = BasketLine.builder()
+            .id(41L)
+            .basket(basket)
+            .skuId(2L)
+            .productLabel("Microfono")
+            .units(2)
+            .unitAmount(new BigDecimal("150000.00"))
+            .lineAmount(new BigDecimal("300000.00"))
+            .build();
+
+        when(basketRepository.findById(93L)).thenReturn(Optional.of(basket));
+        when(basketLineRepository.findAllByBasketIdOrderByIdAsc(93L)).thenReturn(List.of(firstLine, secondLine));
+
+        BasketAmountsResponse response = basketService.getBasketAmounts(93L);
+
+        assertEquals(93L, response.basketId());
+        assertEquals(2, response.totalLines());
+        assertEquals(3, response.totalUnits());
+        assertEquals(new BigDecimal("500000.00"), response.grossAmount());
     }
 }

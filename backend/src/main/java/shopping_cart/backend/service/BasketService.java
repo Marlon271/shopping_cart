@@ -6,10 +6,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import shopping_cart.backend.dto.AdjustBasketLineUnitsRequest;
+import shopping_cart.backend.dto.BasketAmountsResponse;
 import shopping_cart.backend.dto.BasketDetailLineResponse;
 import shopping_cart.backend.dto.BasketDetailResponse;
 import shopping_cart.backend.dto.BasketLineResponse;
 import shopping_cart.backend.dto.BasketSnapshotResponse;
+import shopping_cart.backend.dto.RemoveBasketLineResponse;
 import shopping_cart.backend.dto.RegisterBasketLineRequest;
 import shopping_cart.backend.entity.Basket;
 import shopping_cart.backend.entity.BasketLine;
@@ -120,6 +122,60 @@ public class BasketService implements IBasketService {
         basketRepository.save(basket);
 
         return toLineResponse(storedLine);
+    }
+
+    @Override
+    @Transactional
+    public RemoveBasketLineResponse removeLine(Long basketId, Long lineId) {
+        Basket basket = basketRepository.findById(basketId)
+            .orElseThrow(() -> new ResourceMissingException("No existe una canasta con id " + basketId));
+
+        if (basket.getState() != BasketState.OPEN) {
+            throw new BusinessRuleException("Solo se pueden eliminar lineas en canastas abiertas");
+        }
+
+        BasketLine line = basketLineRepository.findById(lineId)
+            .orElseThrow(() -> new ResourceMissingException("No existe una linea con id " + lineId));
+
+        if (!line.getBasket().getId().equals(basketId)) {
+            throw new BusinessRuleException(
+                "La linea con id " + lineId + " no pertenece a la canasta con id " + basketId
+            );
+        }
+
+        basketLineRepository.delete(line);
+        basket.touch();
+        basketRepository.save(basket);
+
+        return new RemoveBasketLineResponse(
+            "Linea eliminada correctamente de la canasta",
+            basketId,
+            lineId
+        );
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public BasketAmountsResponse getBasketAmounts(Long basketId) {
+        basketRepository.findById(basketId)
+            .orElseThrow(() -> new ResourceMissingException("No existe una canasta con id " + basketId));
+
+        List<BasketLine> lines = basketLineRepository.findAllByBasketIdOrderByIdAsc(basketId);
+
+        int totalUnits = lines.stream()
+            .mapToInt(BasketLine::getUnits)
+            .sum();
+
+        BigDecimal grossAmount = lines.stream()
+            .map(BasketLine::getLineAmount)
+            .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        return new BasketAmountsResponse(
+            basketId,
+            lines.size(),
+            totalUnits,
+            grossAmount
+        );
     }
 
     private BasketSnapshotResponse toResponse(Basket basket) {

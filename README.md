@@ -10,14 +10,18 @@ Actualmente van implementadas:
 - registro de lineas de producto sobre una canasta abierta
 - consulta detallada de la canasta con sus lineas
 - ajuste de unidades por linea
+- retiro individual de lineas
+- consolidado monetario de la canasta
 - backend en Spring Boot con modelo `Basket`
 - modelo `BasketLine` para productos agregados
+- frontend Vue 3 con una vista operativa renovada
 - gateway en Spring Boot como punto unico de entrada
 - PostgreSQL con las tablas `purchase_baskets` y `basket_lines`
 - entorno local con Docker Compose
 
 ## Arquitectura
 
+- `frontend`: tablero visual para operar la canasta
 - `backend`: microservicio principal de negocio
 - `gateway`: fachada REST consumida por el frontend
 - `database`: scripts de inicializacion de PostgreSQL
@@ -28,6 +32,8 @@ Actualmente van implementadas:
 - `POST /api/v1/baskets/{basketId}/lines`
 - `GET /api/v1/baskets/{basketId}`
 - `PATCH /api/v1/baskets/{basketId}/lines/{lineId}`
+- `DELETE /api/v1/baskets/{basketId}/lines/{lineId}`
+- `GET /api/v1/baskets/{basketId}/amounts`
 
 Request:
 
@@ -50,16 +56,15 @@ docker compose up --build
 
 Servicios expuestos:
 
+- `frontend`: `http://localhost:5173`
 - `gateway`: `http://localhost:8080`
 - `backend`: `http://localhost:8081`
 - `postgres`: `localhost:5030`
 
-## Proximas historias
+## Documentacion
 
-- `HU-102`: registrar lineas de producto
-- `HU-103`: consultar el detalle de la canasta
-- `HU-104`: ajustar unidades
-- `HU-105`: retirar lineas
-- `HU-106`: consolidar montos
-- `HU-107`: experiencia visual en frontend
-- `HU-108`: documentacion, diagramas y pantallazos
+- introduccion: `Doc/introduccion.md`
+- estructura de solucion: `Doc/estructura-solucion.md`
+- priorizacion: `Doc/moscow-priorizacion.md`
+- diagramas: `Doc/Diagramas`
+- historias de usuario: `Doc/HU`

@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -39,6 +40,13 @@ public class BasketGatewayController {
         return basketGatewayService.getBasketDetail(basketId);
     }
 
+    @GetMapping("/{basketId}/amounts")
+    public ResponseEntity<Object> getBasketAmounts(
+        @PathVariable @Positive(message = "basketId debe ser un valor positivo") Long basketId
+    ) {
+        return basketGatewayService.getBasketAmounts(basketId);
+    }
+
     @PatchMapping("/{basketId}/lines/{lineId}")
     public ResponseEntity<Object> adjustLineUnits(
         @PathVariable @Positive(message = "basketId debe ser un valor positivo") Long basketId,
@@ -46,6 +54,14 @@ public class BasketGatewayController {
         @Valid @RequestBody AdjustBasketLineUnitsRequest request
     ) {
         return basketGatewayService.adjustLineUnits(basketId, lineId, request);
+    }
+
+    @DeleteMapping("/{basketId}/lines/{lineId}")
+    public ResponseEntity<Object> removeLine(
+        @PathVariable @Positive(message = "basketId debe ser un valor positivo") Long basketId,
+        @PathVariable @Positive(message = "lineId debe ser un valor positivo") Long lineId
+    ) {
+        return basketGatewayService.removeLine(basketId, lineId);
     }
 
     @PostMapping("/{basketId}/lines")
