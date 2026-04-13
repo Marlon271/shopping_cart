@@ -7,13 +7,13 @@
 - `backend`: servicio Spring Boot con las reglas de negocio y persistencia
 - `database`: script SQL inicial para PostgreSQL
 
-## Decisiones de reconstruccion
+## Decisiones de diseno
 
 - Se cambiaron los conceptos `cart` y `cart item` por `basket` y `basket line`.
 - La capa de entrada ahora prioriza un estilo de tablero operativo, no una pantalla CRUD basica.
 - Las rutas publicas quedaron agrupadas bajo `/api/v1/baskets`.
 - La base de datos usa tablas renombradas: `purchase_baskets` y `basket_lines`.
-- La documentacion se reescribio por completo para que la narrativa no replique la del repositorio de referencia.
+- La documentacion se organizo para explicar el sistema desde su propio dominio funcional y tecnico.
 
 ## Stack tecnico
 
