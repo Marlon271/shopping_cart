@@ -26,7 +26,7 @@
 
       <label class="field">
         <span>Valor unitario</span>
-        <input v-model="form.unitAmount" type="number" min="1" step="1000" />
+        <input v-model="form.unitAmount" type="number" min="0" step="1000" />
       </label>
 
       <div class="entry-form__footer">
