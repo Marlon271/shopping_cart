@@ -14,12 +14,14 @@ Actualmente van implementadas:
 - consolidado monetario de la canasta
 - backend en Spring Boot con modelo `Basket`
 - modelo `BasketLine` para productos agregados
+- frontend Vue 3 con una vista operativa renovada
 - gateway en Spring Boot como punto unico de entrada
 - PostgreSQL con las tablas `purchase_baskets` y `basket_lines`
 - entorno local con Docker Compose
 
 ## Arquitectura
 
+- `frontend`: tablero visual para operar la canasta
 - `backend`: microservicio principal de negocio
 - `gateway`: fachada REST consumida por el frontend
 - `database`: scripts de inicializacion de PostgreSQL
@@ -54,6 +56,7 @@ docker compose up --build
 
 Servicios expuestos:
 
+- `frontend`: `http://localhost:5173`
 - `gateway`: `http://localhost:8080`
 - `backend`: `http://localhost:8081`
 - `postgres`: `localhost:5030`
