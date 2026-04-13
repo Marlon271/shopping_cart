@@ -1,6 +1,6 @@
 # Introduccion
 
-`Basket Workspace` es una reconstruccion del caso academico de carrito de compras, pero llevada a un dominio mas propio y a una experiencia visual mas madura. En lugar de repetir el vocabulario de `cart` e `item`, el proyecto se reorganizo alrededor de `Basket` y `BasketLine`, con contratos REST, nombres tecnicos y documentacion diferentes.
+`Basket Workspace` es un proyecto de carrito de compras enfocado en gestionar una canasta activa por comprador desde una experiencia visual operativa. El sistema trabaja con las entidades `Basket` y `BasketLine`, expone contratos REST claros y organiza la informacion para que el flujo de compra pueda consultarse y administrarse con facilidad.
 
 ## Objetivo
 
